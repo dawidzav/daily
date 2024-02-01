@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>daily</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+   <div class="menu-container">
+        <h1>DAILY</h1>
+        <p class="custom-text">There is no stars in the sky, is there even a sky anymore?</p>
+        <button onclick="startGame()">Start</button>
+   </div>
+   
+   <div id="game-screen" class="game-container">
+        <div class="sidebar">
+            <button onclick="goBack()">Go back</button>
+            <div class="character-tab">
+                <h2>Your Character</h2>
+                <img src="images/character_image.png" alt="Your Character Image">
+                <div class="character-options">
+                    <div class="option">
+                        <label for="money">Money:</label>
+                        <span id="moneyValue">12.34 zł</span>
+                    </div>
+                    <div class="option">
+                        <label for="employmentStatus">Employment Status:</label>
+                        <span id="employmentStatusValue">Courier</span>
+                    </div>
+                    <div class="option">
+                        <label for="fatigue">Fatigue:</label>
+                        <span id="fatigueValue">Tired</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="game-options">
+            <button onclick="buyBeer()">Buy Beer</button>
+            <button onclick="playRandomSong()">Play random music</button>
+    <audio id="audioPlayer" controls>
+        <source id="audioSource" type="audio/mp3">
+        
+    </audio>
+        </div>
+   </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
