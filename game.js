@@ -6,10 +6,15 @@ let moneyValue = baseMoneyValue;
 let employmentStatusValue = baseEmploymentStatusValue;
 let fatigueValue = baseFatigueValue;
 
+let inventoryOpen = false;
+
 function updateCharacterOptions() {
     document.getElementById('moneyValue').textContent = moneyValue.toFixed(2) + ' zł';
     document.getElementById('employmentStatusValue').textContent = employmentStatusValue;
     document.getElementById('fatigueValue').textContent = fatigueValue;
+
+    const inventorySection = document.querySelector('.character-tab .inventory');
+    inventorySection.classList.toggle('open', inventoryOpen);
 }
 
 function startGame() {
@@ -42,14 +47,11 @@ function buyBeer() {
 }
 
 function playRandomSong() {
-   
     const audioPlayer = document.getElementById('audioPlayer');
     audioPlayer.pause();
     audioPlayer.currentTime = 0;
-
     
     const audioSource = document.getElementById('audioSource');
-    
     
     const randomSong = 'music/krtky.mp3';
     
@@ -58,5 +60,14 @@ function playRandomSong() {
     audioPlayer.play();
 }
 
+function toggleInventory() {
+    inventoryOpen = !inventoryOpen;
+    updateCharacterOptions();
+
+    if (inventoryOpen) {
+        const inventoryList = document.getElementById('inventoryList');
+        inventoryList.innerHTML = '<li>Item 1</li><li>Item 2</li><li>Item 3</li><li class="unclickable">Papierosy</li>';
+    }
+}
 
 document.getElementById('game-screen').style.display = 'none';

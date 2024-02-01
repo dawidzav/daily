@@ -89,3 +89,25 @@ button {
     border: none;
     border-radius: 5px;
 }
+
+
+.character-tab .inventory {
+    display: none; 
+    margin-top: 20px;
+}
+
+
+.character-tab .option button {
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+
+.character-tab .inventory.open {
+    display: block;
+}
