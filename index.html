@@ -14,8 +14,18 @@
    </div>
    
    <div id="game-screen" class="game-container">
+        <h2 id="location-name"></h2>
+        <ul id="actions-list"></ul>
+        <div class="game-options">
+            <button onclick="buyBeer()">Buy Beer</button>
+            <button onclick="playRandomSong()">Play random music</button>
+            <audio id="audioPlayer" controls>
+                <source id="audioSource" type="audio/mp3">
+            </audio>
+        </div>
         <div class="sidebar">
             <button onclick="goBack()">Go back</button>
+            <button onclick="goToMainMenu()">Main Menu</button>
             <div class="character-tab">
                 <h2>Your Character</h2>
                 <img src="images/character_image.png" alt="Your Character Image">
@@ -37,20 +47,10 @@
                     </div>
                     <div class="inventory">
                         <h3>Inventory</h3>
-                        <ul id="inventoryList">
-                           
-                        </ul>
+                        <ul id="inventoryList"></ul>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="game-options">
-            <button onclick="buyBeer()">Buy Beer</button>
-            <button onclick="playRandomSong()">Play random music</button>
-    <audio id="audioPlayer" controls>
-        <source id="audioSource" type="audio/mp3">
-        
-    </audio>
         </div>
    </div>
 

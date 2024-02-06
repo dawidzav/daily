@@ -7,26 +7,88 @@ let employmentStatusValue = baseEmploymentStatusValue;
 let fatigueValue = baseFatigueValue;
 
 let inventoryOpen = false;
+let visitedLocations = []; //przechowywanie lokalizacji
 
-function updateCharacterOptions() {
-    document.getElementById('moneyValue').textContent = moneyValue.toFixed(2) + ' zł';
-    document.getElementById('employmentStatusValue').textContent = employmentStatusValue;
-    document.getElementById('fatigueValue').textContent = fatigueValue;
-
-    const inventorySection = document.querySelector('.character-tab .inventory');
-    inventorySection.classList.toggle('open', inventoryOpen);
+function loadLocations() {
+    fetch('locations.json')
+        .then(response => response.json())
+        .then(data => {
+            const locations = data.locations;
+            startGame(locations);
+        })
+        .catch(error => {
+            console.error('Error loading locations:', error);
+        });
 }
 
-function startGame() {
+function startGame(locations) {
     document.querySelector('.menu-container').style.display = 'none';
     document.getElementById('game-screen').style.display = 'flex';
-    updateCharacterOptions();
+    showLocation(locations[0]);
+    document.querySelector('.game-options').style.display = 'none'; // przyciski buy beer i random music zrob z tym cos potem
+}
+
+// wyswietlanie lokalizacji
+function showLocation(location) {
+    document.getElementById('location-name').textContent = location.name;
+
+    const actionsList = document.getElementById('actions-list');
+    actionsList.innerHTML = '';
+    if (location.name === "Shop") {
+    const randomNum = Math.floor(Math.random() * 3) + 1;
+     
+    // losowanie
+    let shopText = "";
+    switch (randomNum) {
+        case 1:
+            shopText = "You enter the store. The cashier is browsing her phone, and the smell of hot dogs fills the air";
+            break;
+        case 2:
+            shopText = "Two cashiers are telling each other some stupid stories.";
+            break;
+        case 3:
+            shopText = "The cashier's gaze speaks to you clearly - get the hell out of here.";
+            break;
+        default:
+            shopText = "The cashier's gaze speaks to you clearly - get the hell out of here.";
+    }
+
+    // tekst jako jedna z akcji
+    const shopTextElement = document.createElement('p');
+    shopTextElement.textContent = shopText;
+    actionsList.appendChild(shopTextElement);
+    }
+    location.actions.forEach(action => {
+        const actionItem = document.createElement('li');
+        actionItem.textContent = action;
+        actionsList.appendChild(actionItem);
+        
+        // go outside
+        if (action === "Go outside") {
+            actionItem.addEventListener('click', () => goToLocation("Outside"));
+            actionItem.style.cursor = "pointer"; // kursor
+        } else if (action === "Shop") {
+            actionItem.addEventListener('click', () => goToLocation("Shop")); // to samo co wyżej tylko sklep
+            actionItem.style.cursor = "pointer"; // kursor
+        }
+    });
+    
+    // push do historii lokalizacji
+    visitedLocations.push(location);
 }
 
 function goBack() {
-    document.querySelector('.menu-container').style.display = 'block';
-    document.getElementById('game-screen').style.display = 'none';
-    resetCharacterOptions();
+    if (visitedLocations.length > 1) {
+        // cofanie do poprzedniej lokalizacji
+        visitedLocations.pop(); // usuwanie bieżącej
+        const previousLocation = visitedLocations.pop(); // daj poprzednią
+        showLocation(previousLocation); // pokaż poprzednią
+    } else {
+        // albo menu, jeśli nie ma poprzedniej
+        document.querySelector('.menu-container').style.display = 'block';
+        document.getElementById('game-screen').style.display = 'none';
+        resetCharacterOptions();
+    }
 }
 
 function resetCharacterOptions() {
@@ -36,38 +98,28 @@ function resetCharacterOptions() {
     updateCharacterOptions();
 }
 
-function buyBeer() {
-    if (moneyValue >= 4.20) {
-        moneyValue -= 4.20;
-        updateCharacterOptions();
-        console.log("The Taste of Everyday Life...");
-    } else {
-        console.log("You don't have money, bro.");
-    }
+// przechodzenie do określonego miejsca
+function goToLocation(locationName) {
+    fetch('locations.json')
+        .then(response => response.json())
+        .then(data => {
+            const location = data.locations.find(loc => loc.name === locationName);
+            if (location) {
+                showLocation(location);
+            } else {
+                console.error(`Location "${locationName}" not found.`);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading locations:', error);
+        });
 }
 
-function playRandomSong() {
-    const audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-    
-    const audioSource = document.getElementById('audioSource');
-    
-    const randomSong = 'music/krtky.mp3';
-    
-    audioSource.src = randomSong;
-    audioPlayer.load();
-    audioPlayer.play();
+// won do menu
+function goToMainMenu() {
+    document.querySelector('.menu-container').style.display = 'block';
+    document.getElementById('game-screen').style.display = 'none';
+    resetCharacterOptions();
 }
 
-function toggleInventory() {
-    inventoryOpen = !inventoryOpen;
-    updateCharacterOptions();
-
-    if (inventoryOpen) {
-        const inventoryList = document.getElementById('inventoryList');
-        inventoryList.innerHTML = '<li>Item 1</li><li>Item 2</li><li>Item 3</li><li class="unclickable">Papierosy</li>';
-    }
-}
-
-document.getElementById('game-screen').style.display = 'none';
+loadLocations();

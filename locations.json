@@ -1,0 +1,16 @@
+{
+    "locations": [
+        {
+            "name": "Your Room",
+            "actions": ["Sleep", "Use computer", "Go outside"]
+        },
+        {
+            "name": "Outside",
+            "actions": ["Bus", "Shop", "Walk"]
+        },
+        {
+            "name": "Shop",
+            "actions": ["Buy groceries", "Buy vodka", "Buy cigarettes", "Buy beer"]
+        }
+    ]
+}
