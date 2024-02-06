@@ -14,10 +14,9 @@
    </div>
    
    <div id="game-screen" class="game-container">
-        <h2 id="location-name"></h2>
+        <h2 id="location-name">Your Room</h2>
         <ul id="actions-list"></ul>
         <div class="game-options">
-            <button onclick="buyBeer()">Buy Beer</button>
             <button onclick="playRandomSong()">Play random music</button>
             <audio id="audioPlayer" controls>
                 <source id="audioSource" type="audio/mp3">
@@ -45,13 +44,29 @@
                     <div class="option">
                         <button onclick="toggleInventory()">Inventory</button>
                     </div>
-                    <div class="inventory">
+                    <div class="inventory" style="display: none;">
                         <h3>Inventory</h3>
                         <ul id="inventoryList"></ul>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="room-image-container"> 
+            <img src="images\room.jpg" alt="Your Room Image" class="room-image">
+        </div>
+   </div>
+   
+   
+   <div id="reading-list-dialog" class="modal">
+       <div class="modal-content">
+           <span class="close" onclick="closeReadingDialog()">&times;</span>
+           <h3>Reading List</h3>
+           <ul>
+               <li onclick="selectBook('Book 1')">Book 1</li>
+               <li onclick="selectBook('Book 2')">Book 2</li>
+               <li onclick="selectBook('Twilight of the Idols')">Twilight of the Idols</li> 
+           </ul>
+       </div>
    </div>
 
     <script src="game.js"></script>

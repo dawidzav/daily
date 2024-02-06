@@ -2,7 +2,7 @@
     "locations": [
         {
             "name": "Your Room",
-            "actions": ["Sleep", "Use computer", "Go outside"]
+            "actions": ["Sleep", "Use computer", "Go outside", "Read"]
         },
         {
             "name": "Outside",

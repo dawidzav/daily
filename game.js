@@ -6,8 +6,26 @@ let moneyValue = baseMoneyValue;
 let employmentStatusValue = baseEmploymentStatusValue;
 let fatigueValue = baseFatigueValue;
 
-let inventoryOpen = false;
-let visitedLocations = []; //przechowywanie lokalizacji
+let visitedLocations = []; // przechowywanie lokalizacji
+
+// przedmioty w sklepie
+const shopItems = {
+    "groceries": { name: "Groceries", price: 50 },
+    "vodka": { name: "Vodka", price: 25 },
+    "cigarettes": { name: "Cigarettes", price: 15.50 },
+    "beer": { name: "Beer", price: 4.30 }
+};
+
+// Obiekt mapujący nazwy akcji na funkcje obsługi
+const actionHandlers = {
+    "Go outside": () => goToLocation("Outside"),
+    "Shop": () => goToLocation("Shop"),
+    "Read": showReadingDialog, 
+    "Buy groceries": () => buyItem("groceries"), 
+    "Buy vodka": () => buyItem("vodka"), 
+    "Buy cigarettes": () => buyItem("cigarettes"), 
+    "Buy beer": () => buyItem("beer") 
+};
 
 function loadLocations() {
     fetch('locations.json')
@@ -30,51 +48,95 @@ function startGame(locations) {
 
 // wyswietlanie lokalizacji
 function showLocation(location) {
+    
+    document.querySelector('.game-container').classList.remove('in-room');
+
+
+    if (location.name === 'Your Room') {
+        document.querySelector('.game-container').classList.add('in-room');
+    }
+
     document.getElementById('location-name').textContent = location.name;
 
     const actionsList = document.getElementById('actions-list');
     actionsList.innerHTML = '';
-    if (location.name === "Shop") {
-    const randomNum = Math.floor(Math.random() * 3) + 1;
-     
-    // losowanie
-    let shopText = "";
-    switch (randomNum) {
-        case 1:
-            shopText = "You enter the store. The cashier is browsing her phone, and the smell of hot dogs fills the air";
-            break;
-        case 2:
-            shopText = "Two cashiers are telling each other some stupid stories.";
-            break;
-        case 3:
-            shopText = "The cashier's gaze speaks to you clearly - get the hell out of here.";
-            break;
-        default:
-            shopText = "The cashier's gaze speaks to you clearly - get the hell out of here.";
-    }
 
-    // tekst jako jedna z akcji
-    const shopTextElement = document.createElement('p');
-    shopTextElement.textContent = shopText;
-    actionsList.appendChild(shopTextElement);
-    }
     location.actions.forEach(action => {
         const actionItem = document.createElement('li');
         actionItem.textContent = action;
         actionsList.appendChild(actionItem);
+
         
-        // go outside
-        if (action === "Go outside") {
-            actionItem.addEventListener('click', () => goToLocation("Outside"));
-            actionItem.style.cursor = "pointer"; // kursor
-        } else if (action === "Shop") {
-            actionItem.addEventListener('click', () => goToLocation("Shop")); // to samo co wyżej tylko sklep
-            actionItem.style.cursor = "pointer"; // kursor
+        if (actionHandlers[action]) {
+            actionItem.addEventListener('click', () => actionHandlers[action](location));
+            actionItem.style.cursor = "pointer";
         }
     });
-    
-    // push do historii lokalizacji
+
+    // Push do historii lokalizacji
     visitedLocations.push(location);
+}
+
+// Funkcja obsługi akcji "Read"
+function showReadingDialog(location) {
+    // Tutaj dodajemy kod obsługujący otwarcie okna dialogowego z listą książek
+    const readingListDialog = document.getElementById('reading-list-dialog');
+    readingListDialog.style.display = 'block'; // Pokazujemy okno dialogowe
+}
+
+// Funkcja obsługi wyboru książki
+function selectBook(bookName) {
+    
+    
+    console.log("Selected book:", bookName);
+    closeReadingDialog(); 
+    if (bookName === 'Twilight of the Idols') {
+        
+        const text = `Walka jest wychowawczynią wolności.
+        Gdyż co to jest wolność? To pragnienie samo - odpowiedzialności. To przestrzeganie dzielących nas oddaleń. To zobojętnienie na trudy, niedostatki, srogość, nawet na życie. To gotowość poświęcenia swej sprawie innych i siebie. Wolność - to znaczy, że instynkty tryumfalne, wojownicze, męskie zawładnęły innymi, na przykład instynktem „szczęścia”.
+        Człowiek wyzwolony, tem bardziej duch wyzwolony, gardzi nikczemną błogością, o której marzą przekupnie, chrześcijanie, krowy, kobiety, Anglicy oraz inne demokraty. Człowiek wolny jest wojownikiem. - Czemże mierzy się wolność u jednostek i u narodów? Oporem, który pokonać trzeba, trudem, którym okupuje się swą przewagę. Najwyższego typu wolnego człowieka należałoby szukać tam, gdzie wciąż największe pokonywa się opory: o pięć kroków od tyranii, tuż u progu grożącego niewolnictwa.
+        `;
+        window.alert(text);
+    }
+}
+
+// Funkcja zamykająca okno dialogowe
+function closeReadingDialog() {
+    const readingListDialog = document.getElementById('reading-list-dialog');
+    readingListDialog.style.display = 'none'; 
+}
+
+
+function buyItem(itemKey) {
+    const item = shopItems[itemKey];
+    if (item && moneyValue >= item.price) {
+            
+        addToInventory(item.name);
+            
+        moneyValue -= item.price;
+            
+        document.getElementById('moneyValue').textContent = moneyValue.toFixed(2) + ' zł';
+    } else {
+        console.log("Insufficient funds or item not found.");
+    }
+}
+
+
+function addToInventory(itemName) {
+    const inventoryList = document.getElementById('inventoryList');
+    const listItem = document.createElement('li');
+    listItem.textContent = itemName;
+    inventoryList.appendChild(listItem);
+}
+
+// Funkcja otwierająca i zamykająca ekwipunek
+function toggleInventory() {
+    const inventory = document.querySelector('.inventory');
+    if (inventory.style.display === 'none') {
+        inventory.style.display = 'block';
+    } else {
+        inventory.style.display = 'none';
+    }
 }
 
 function goBack() {
@@ -98,7 +160,7 @@ function resetCharacterOptions() {
     updateCharacterOptions();
 }
 
-// przechodzenie do określonego miejsca
+
 function goToLocation(locationName) {
     fetch('locations.json')
         .then(response => response.json())
